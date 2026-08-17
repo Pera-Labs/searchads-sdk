@@ -1,0 +1,13 @@
+{
+  "name": "searchads-sdk",
+  "version": "0.1.0",
+  "description": "Analytics + Apple Search Ads attribution SDK for searchads.tools (Swift + JS/React Native)",
+  "main": "js/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pera-Labs/searchads-sdk.git"
+  },
+  "keywords": ["analytics", "apple-search-ads", "attribution", "react-native", "swift"],
+  "files": ["js", "Sources", "Package.swift", "README.md", "LICENSE"]
+}
