@@ -33,6 +33,9 @@ const TOOLS = [
   { name: 'revenue_by_keyword', endpoint: 'revenue-by-keyword', description: 'Revenue attributed per Apple Search Ads keyword.', params: { sinceDays: num } },
   { name: 'roas', endpoint: 'roas', description: 'Revenue vs ad-spend rollup (ROAS). Works without ASA connected (spend will be absent).', params: {} },
   { name: 'asa_campaigns', endpoint: 'asa', description: 'Live Apple Search Ads campaign/adgroup/keyword view. Returns asa_not_connected if no ASA org is linked yet.', params: {} },
+  { name: 'asa_connect', endpoint: 'asa/connect', method: 'POST',
+    description: 'Connect an Apple Search Ads org to this account. Pass keyPemPath (local path to the .p8 private key file) — the file is read locally and sent once over HTTPS; it is never logged or stored on disk by this tool. Credentials are verified against Apple before being stored encrypted server-side. Returns asa_already_connected unless overwrite is true.',
+    params: { clientId: { ...str, required: true }, teamId: { ...str, required: true }, keyId: { ...str, required: true }, orgId: { ...str, required: true }, keyPemPath: { ...str, required: true }, campaignId: str, overwrite: { type: 'boolean' } } },
 ];
 
 function toolSchema(t) {
@@ -62,6 +65,31 @@ async function callTool(name, args) {
     else qs.set(k, String(a[k]));
   }
   if (path.includes('{')) throw new Error('missing required argument for ' + name);
+  if (t.method === 'POST') {
+    for (const k of Object.keys(t.params)) {
+      if (t.params[k].required && (a[k] === undefined || a[k] === null || a[k] === '')) {
+        throw new Error('missing required argument ' + k + ' for ' + name);
+      }
+    }
+    const body = { ...a };
+    if (name === 'asa_connect') {
+      const fs = require('fs');
+      let pem;
+      try { pem = fs.readFileSync(String(a.keyPemPath), 'utf8'); }
+      catch (e) { throw new Error('could not read keyPemPath: ' + e.message); }
+      if (!/-----BEGIN [A-Z ]*PRIVATE KEY-----/.test(pem)) throw new Error('keyPemPath does not look like a .p8 private key (PEM)');
+      delete body.keyPemPath;
+      body.keyPem = pem;
+    }
+    const resP = await fetch(BASE + '/api/agent/' + path, {
+      method: 'POST',
+      headers: { 'x-api-key': API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const textP = await resP.text();
+    if (!resP.ok && resP.status !== 400) throw new Error('HTTP ' + resP.status + ': ' + textP.slice(0, 300));
+    return textP;
+  }
   const url = BASE + '/api/agent/' + path + (qs.toString() ? '?' + qs.toString() : '');
   const res = await fetch(url, { headers: { 'x-api-key': API_KEY } });
   const text = await res.text();
@@ -84,7 +112,7 @@ async function handle(msg) {
     return reply(id, {
       protocolVersion: (params && params.protocolVersion) || '2025-06-18',
       capabilities: { tools: {} },
-      serverInfo: { name: 'searchads-mcp', version: '0.2.0' },
+      serverInfo: { name: 'searchads-mcp', version: '0.2.2' },
     });
   }
   if (method === 'notifications/initialized' || (method && method.startsWith('notifications/'))) return; // no reply to notifications

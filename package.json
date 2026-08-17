@@ -1,14 +1,28 @@
 {
   "name": "searchads-sdk",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Analytics + Apple Search Ads attribution SDK for searchads.tools (Swift + JS/React Native + MCP server)",
   "main": "js/index.js",
-  "bin": { "searchads-mcp": "js/mcp.js" },
+  "bin": {
+    "searchads-mcp": "js/mcp.js"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Pera-Labs/searchads-sdk.git"
   },
-  "keywords": ["analytics", "apple-search-ads", "attribution", "react-native", "swift"],
-  "files": ["js", "Sources", "Package.swift", "README.md", "LICENSE"]
+  "keywords": [
+    "analytics",
+    "apple-search-ads",
+    "attribution",
+    "react-native",
+    "swift"
+  ],
+  "files": [
+    "js",
+    "Sources",
+    "Package.swift",
+    "README.md",
+    "LICENSE"
+  ]
 }
