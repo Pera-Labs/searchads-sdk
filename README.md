@@ -72,6 +72,20 @@ with header `x-api-key: sa_...` — `me`, `events`, `users`, `user/<id>`,
 `retention`, `funnel-by-keyword`, `geo`, `hourly`, `revenue-by-keyword`,
 `roas`, `asa`. See the AI agent prompt in the web console for the full table.
 
+## MCP server (Claude Code / Codex / Cursor)
+
+The package ships a zero-dependency MCP server exposing every agent endpoint
+as a tool. Add it to Claude Code with:
+
+```
+claude mcp add searchads -e SEARCHADS_API_KEY=sa_... -- npx -y github:Pera-Labs/searchads-sdk searchads-mcp
+```
+
+Tools: `account_info`, `events_summary`, `list_users`, `user_timeline`,
+`retention`, `funnel_by_keyword`, `geo_breakdown`, `hourly_events`,
+`revenue_by_keyword`, `roas`, `asa_campaigns`. The api key is read from the
+environment only — it is never a command-line argument and never logged.
+
 ## License
 
 MIT

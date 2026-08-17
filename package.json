@@ -1,8 +1,9 @@
 {
   "name": "searchads-sdk",
-  "version": "0.1.0",
-  "description": "Analytics + Apple Search Ads attribution SDK for searchads.tools (Swift + JS/React Native)",
+  "version": "0.2.0",
+  "description": "Analytics + Apple Search Ads attribution SDK for searchads.tools (Swift + JS/React Native + MCP server)",
   "main": "js/index.js",
+  "bin": { "searchads-mcp": "js/mcp.js" },
   "license": "MIT",
   "repository": {
     "type": "git",
